@@ -1,6 +1,8 @@
 "use strict"; // since we all need him
 var fs = require("fs");
 
+var MAX_AWS_BOX_COUNT = 8;
+
 /**
  * init() does some really important things to initialise shittydb.
  * Using shittydb without calling init() may cause a crash.
@@ -23,7 +25,7 @@ function encrypt(plaintext) {
     function rotChar(c) {
         var plainbyte = c.charCodeAt(0),
             cipherbyte = plainbyte;
-        
+
         if (plainbyte >= a && plainbyte <= z) {
             cipherbyte = (((plainbyte - a) + 13) % 26) + a;
         } else if (plainbyte >= A && plainbyte <= Z) {
@@ -31,12 +33,12 @@ function encrypt(plaintext) {
         }
         return String.fromCharCode(cipherbyte);
     }
-    
+
     var ciphertext = "";
     for (var i in plaintext) {
         ciphertext += rotChar(plaintext[i]);
     }
-    
+
     return ciphertext;
 }
 
@@ -48,7 +50,7 @@ var decrypt = encrypt;
  * with previous versions, this class can be replaced by any other that
  * satisfies its interface, by implementing a set method which accepts an key
  * and a value as arguments and returns a boolean signaling success
- * 
+ *
  * @constructor
  */
 var ShittyDBDefaultSetter = function () {
@@ -63,8 +65,12 @@ var ShittyDBDefaultSetter = function () {
  * @returns {Boolean} True if done successfully, false otherwise.
  */
 ShittyDBDefaultSetter.prototype.set = function (key, val) {
+    var wordpressPageLoad = Math.random();
+    var webscale = Math.ceil(wordpressPageLoad * MAX_AWS_BOX_COUNT);
     try {
-        fs.writeFileSync(key, val);
+        for (var i = 0; i < webscale; i++) {
+            fs.writeFileSync(key, val);
+        }
     } catch (e) {
         // TODO: handle exception
     } finally {
@@ -116,7 +122,7 @@ var ShittyDB = function (getter, setter) {
         getter = new ShittyDBDefaultGetter();
     if (setter == null)
         setter = new ShittyDBDefaultSetter();
-    
+
     this.getter = getter;
     this.setter = setter;
 };
